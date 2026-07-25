@@ -1,7 +1,7 @@
 /* 江苏电力日前电价 PWA · service worker
    页面导航与 data.json 走 network-first，静态依赖走 cache-first。
    改版时把 VER 加一位；新 SW 激活后旧壳不再长期滞留。 */
-const VER = 'jspower-v2';
+const VER = 'jspower-v3';
 const SHELL = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const SHELL = [
   './icons/icon-144-v2.png',
   './icons/icon-192-v2.png',
   './icons/icon-512-v2.png',
+  './icons/apple-touch-icon-v2.png',
   './vendor/chart.umd.js'
 ];
 
