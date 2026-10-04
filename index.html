@@ -537,6 +537,8 @@ function drawPredChart(){
   const med=hrs.map(h=>h.median), q90=hrs.map(h=>h.q90), q10=hrs.map(h=>h.q10);
   const hasAct=hrs.some(h=>h.actual!=null);
   const act=hrs.map(h=>h.actual!=null?h.actual:null);
+  const hasNv=hrs.every(h=>h.naive!=null);
+  const nv=hrs.map(h=>h.naive!=null?h.naive:null);
   const ptC=hrs.map(h=>h.hour===s.peak.hour?C.coral:h.hour===s.valley.hour?C.green:'rgba(0,0,0,0)');
   const ptR=hrs.map(h=>(h.hour===s.peak.hour||h.hour===s.valley.hour)?4.5:0);
   const fullBand=PRED_CHART_MODE==='band';
@@ -550,8 +552,9 @@ function drawPredChart(){
     {data:med,borderColor:C.brand,borderWidth:2.5,tension:.35,fill:false,
       pointRadius:ptR,pointBackgroundColor:ptC,pointBorderColor:'#fff',pointBorderWidth:1.5,pointHoverRadius:5,label:'中位'}
   );
+  if(hasNv) ds.push({data:nv,borderColor:'rgba(156,163,175,.85)',borderWidth:1.3,borderDash:[2,3],tension:.35,fill:false,pointRadius:0,pointHoverRadius:3,label:'昨日同时刻'});
   if(hasAct) ds.push({data:act,borderColor:C.coral,borderWidth:2,borderDash:[4,3],tension:.35,fill:false,pointRadius:0,pointHoverRadius:4,label:'实际'});
-  const focus=med.concat(hasAct?act.filter(v=>v!=null):[]);
+  const focus=med.concat(hasAct?act.filter(v=>v!=null):[],hasNv?nv:[]);
   const opts=baseChart({unit:'元/MWh',showTip:fullBand?2:0});
   if(fullBand){
     const all=q10.concat(q90,focus), lo=Math.min(...all), hi=Math.max(...all);
@@ -566,6 +569,7 @@ function drawPredChart(){
   window._pc=new Chart($('#predChart'),{type:'line',data:{labels,datasets:ds},options:opts});
   $('#bandNote').innerHTML=(fullBand?'<b style="color:var(--brand)">完整显示</b> Q10–Q90 80% 区间　':'<b style="color:var(--amber)">走势模式</b> 已隐藏区间阴影　')+
     '<span style="color:var(--brand)">━</span> 中位　<span style="color:var(--amber)">┄</span> 均价 '+f1(s.avg_median)+
+    (hasNv?'　<span style="color:#9ca3af">┈</span> 昨日同时刻':'')+
     (hasAct?'　<span style="color:var(--coral)">┅</span> 事后实际':'')+
     '　<span style="color:var(--coral)">●</span>峰 '+f1(s.peak.price)+'　<span style="color:var(--green)">●</span>谷 '+f1(s.valley.price);
 }
